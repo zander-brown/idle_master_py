@@ -28,6 +28,7 @@ def get_steam_api():
             steam_api = CDLL('./libsteam_api64.so')
         else:
             print('Linux architecture not supported')
+            sys.exit()
     elif sys.platform.startswith('darwin'):
         print('Loading OSX library')
         steam_api = CDLL('./libsteam_api.dylib')
@@ -50,7 +51,8 @@ def init_gui(str_app_id):
         tk_image = ImageTk.PhotoImage(pil_image)
         label = tk.Label(gui, image=tk_image)
         label.image = tk_image
-    except:
+    except Exception as e:
+        print("Error loading image: ", e)
         label = tk.Label(gui, text="Couldn't load image")
         
     label.pack()
@@ -66,10 +68,9 @@ if __name__ == '__main__':
     os.environ["SteamAppId"] = str_app_id
     try:
         get_steam_api().SteamAPI_Init()
-    except:
-        print("Couldn't initialize Steam API")
+    except Exception as e:
+        print("Couldn't initialize Steam API: ", e)
         sys.exit()
         
     gui = init_gui(str_app_id)
     gui.mainloop()
-    
